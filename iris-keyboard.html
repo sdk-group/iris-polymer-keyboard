@@ -19,16 +19,28 @@
         ready() {
           this.async(() => {
             let test = this.querySelector('.input-wrapper input');
-            console.log(test);
 
             let keyboard = $(test).keyboard({
+              usePreview: false,
               position: {
                 of: $(test),
-                my: 'center top',
+                my: 'center center',
                 at: 'center top',
                 at2: 'center bottom'
+              },
+              initialized: function(e, keyboard, el) {
+                setTimeout(() => {
+                  keyboard.reveal();
+                  $('.ui-keyboard').position({
+                    of: $(test),
+                    my: 'center top',
+                    at: 'center bottom'
+                  });
+                }, 1);
+
               }
             });
+
 
           });
         }
