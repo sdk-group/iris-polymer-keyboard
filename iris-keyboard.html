@@ -1,18 +1,39 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="keyboard-scripts.html">
+
 <dom-module id="iris-keyboard">
   <template>
+
+    <div class="input-wrapper">
+      <content select=".keyboard-input"> </content>
+    </div>
   </template>
 
   <script>
     'use strict';
-    (function() {
+    (function($) {
       Polymer({
         is: 'iris-keyboard',
         properties: {},
-        ready() {}
+        ready() {
+          this.async(() => {
+            let test = this.querySelector('.input-wrapper input');
+            console.log(test);
+
+            let keyboard = $(test).keyboard({
+              position: {
+                of: $(test),
+                my: 'center top',
+                at: 'center top',
+                at2: 'center bottom'
+              }
+            });
+
+          });
+        }
       });
-    })();
+    })(jQuery);
   </script>
 
 </dom-module>
