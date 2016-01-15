@@ -1,0 +1,23 @@
+{
+  "name": "iris-polymer-keyboard",
+  "homepage": "https://github.com/sdk-group/iris-polymer-keyboard",
+  "authors": [
+    "artificial-life <proteus.protocol@gmail.com>"
+  ],
+  "description": "customizable keyboard for polymer",
+  "main": "iris-keyboard.html",
+  "moduleType": [],
+  "keywords": [
+    "iris",
+    "keyboard",
+    "terminals"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
