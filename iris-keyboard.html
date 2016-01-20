@@ -1,51 +1,132 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
 
-<link rel="import" href="keyboard-scripts.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/iris-polymer-keyboard/base-layouts.html">
 
 <dom-module id="iris-keyboard">
   <template>
-
-    <div class="input-wrapper">
-      <content select=".keyboard-input"> </content>
+    <style include="shared-styles"></style>
+    <style>
+      :host {
+        display: block;
+      }
+      
+      paper-button.backspace-button,
+      paper-button.next-button {
+        width: 15%;
+      }
+      
+      paper-button.spacebar-button {
+        width: 50%;
+      }
+      
+      paper-button {
+        margin-bottom: 15px;
+        min-width: 20px;
+        font-size: 20px;
+        padding: 10px 15px;
+      }
+      
+      .keyboard-row {
+        justify-content: center;
+      }
+    </style>
+    <div class$="{{layout_name}}">
+      <template is="dom-repeat" items="[[processed_layout]]" as="row">
+        <div class="keyboard-row horizontal layout wrap">
+          <template is="dom-repeat" items="[[row]]" as="button">
+            <paper-button raised class$="[[button.class]]" on-click="buttonAction">
+              <template is="dom-if" if="[[button.icon]]">
+                <iron-icon icon="hardware:keyboard-backspace"></iron-icon>
+              </template>
+              {{button.label}}
+            </paper-button>
+          </template>
+        </div>
+      </template>
     </div>
+
   </template>
 
   <script>
     'use strict';
-    (function($) {
+    (function() {
+      let default_placeholders = {
+        'spacebar': {
+          label: 'Пробел',
+          letter: ' ',
+          action: 'type'
+        },
+        'next': {
+          label: 'Далее',
+          action: 'confirm'
+        },
+        'backspace': {
+          label: '',
+          action: 'backspace',
+          icon: 'hardware:keyboard-backspace'
+        }
+      };
+      let _meta = Polymer.Base.create('iron-meta', {
+        type: 'iris-keyboard-layouts'
+      });
       Polymer({
         is: 'iris-keyboard',
-        properties: {},
-        ready() {
-          this.async(() => {
-            let test = this.querySelector('.input-wrapper input');
+        properties: {
+          text: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          layout: {
+            type: String,
+            observer: '_layoutChanged'
+          }
+        },
+        _layoutChanged(layout) {
+          let model = _meta.byKey(layout);
+          let layout_map = model.getLayout();
 
-            let keyboard = $(test).keyboard({
-              usePreview: false,
-              position: {
-                of: $(test),
-                my: 'center center',
-                at: 'center top',
-                at2: 'center bottom'
-              },
-              initialized: function(e, keyboard, el) {
-                setTimeout(() => {
-                  keyboard.reveal();
-                  $('.ui-keyboard').position({
-                    of: $(test),
-                    my: 'center top',
-                    at: 'center bottom'
-                  });
-                }, 1);
+          this.processed_layout = _.map(layout_map, (row) => _.map(row, (button) => {
+            if (button.toString().indexOf('&&') !== 0) return {
+              action: 'type',
+              letter: button,
+              label: button,
+              class: 'button'
+            }
 
-              }
-            });
+            let name = button.slice(2);
+            let desc = default_placeholders[name];
+            desc.class = name + '-button';
+            return desc;
+          }));
+        },
+        buttonAction(e) {
+          let button = e.model.button;
 
-
-          });
+          if (button.action instanceof Function) {
+            this.set('text', button.action(this.text));
+          } else {
+            this[button.action](button);
+          }
+        },
+        confirm() {
+          this.fire('keyboard-confirm', this.text);
+        },
+        backspace() {
+          this.set('text', this.text.slice(0, -1));
+        },
+        type(button) {
+          this.set('text', this.text + button.letter)
+        },
+        erase() {
+          this.set('text', '');
         }
       });
-    })(jQuery);
+    })();
   </script>
 
 </dom-module>

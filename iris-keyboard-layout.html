@@ -1,0 +1,37 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-meta/iron-meta.html">
+
+<script>
+  Polymer({
+    is: 'iris-keyboard-layout',
+    properties: {
+      name: {
+        type: String,
+        observer: '_nameChanged'
+      }
+    },
+    attached: function() {
+      this.style.display = 'none';
+    },
+    getLayout: function() {
+      this.layout = this.layout || this._createLayout();
+      return this.layout;
+    },
+    _nameChanged: function() {
+      new Polymer.IronMeta({
+        type: 'iris-keyboard-layouts',
+        key: this.name,
+        value: this
+      });
+    },
+    _createLayout: function() {
+      var result = [];
+
+      Polymer.dom(this).querySelectorAll('.layout > *')
+        .forEach((row) => {
+          result.push(row.textContent.split(' '))
+        });
+      return result;
+    }
+  });
+</script>
