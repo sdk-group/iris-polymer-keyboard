@@ -84,6 +84,9 @@
           layout: {
             type: String,
             observer: '_layoutChanged'
+          },
+          maxLength: {
+            type: Number
           }
         },
         _layoutChanged(layout) {
@@ -120,7 +123,7 @@
           this.set('text', this.text.slice(0, -1));
         },
         type(button) {
-          this.set('text', this.text + button.letter)
+          if (!this.maxLength || this.maxLength > this.text.length) this.set('text', this.text + button.letter)
         },
         erase() {
           this.set('text', '');
