@@ -120,7 +120,7 @@
           this.fire('keyboard-confirm', this.text);
         },
         backspace() {
-          this.set('text', this.text.slice(0, -1));
+          this.set('text', this.text.toString().slice(0, -1));
         },
         type(button) {
           if (!this.maxLength || this.maxLength > this.text.length) this.set('text', this.text + button.letter)
