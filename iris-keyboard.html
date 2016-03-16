@@ -87,6 +87,11 @@
           },
           maxLength: {
             type: Number
+          },
+          lastPressed: {
+            type: String,
+            value: '',
+            notify: true
           }
         },
         _layoutChanged(layout) {
@@ -114,6 +119,7 @@
             this.set('text', button.action(this.text));
           } else {
             this[button.action](button);
+            this.set('lastPressed', button.letter || button.action);
           }
         },
         confirm() {
@@ -123,7 +129,9 @@
           this.set('text', this.text.toString().slice(0, -1));
         },
         type(button) {
-          if (!this.maxLength || this.maxLength > this.text.length) this.set('text', this.text + button.letter)
+          if (!this.maxLength || this.maxLength > this.text.toString().length) {
+            this.set('text', this.text + button.letter);
+          }
         },
         erase() {
           this.set('text', '');
