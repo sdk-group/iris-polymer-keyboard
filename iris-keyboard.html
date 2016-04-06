@@ -38,7 +38,7 @@
       <template is="dom-repeat" items="[[processed_layout]]" as="row">
         <div class="keyboard-row horizontal layout wrap">
           <template is="dom-repeat" items="[[row]]" as="button">
-            <paper-button raised class$="[[button.class]]" on-click="buttonAction">
+            <paper-button raised class$="[[button.class]]" on-click="buttonAction" disabled$="[[isDisabled(button.label,disabledButtons)]]">
               <template is="dom-if" if="[[button.icon]]">
                 <iron-icon icon="hardware:keyboard-backspace"></iron-icon>
               </template>
@@ -92,6 +92,10 @@
             type: String,
             value: '',
             notify: true
+          },
+          disabledButtons: {
+            type: Array,
+            value: []
           }
         },
         _layoutChanged(layout) {
@@ -111,6 +115,12 @@
             desc.class = name + '-button';
             return desc;
           }));
+        },
+        isDisabled(label, disabled) {
+          if (!_.isArray(disabled)) return label == disabled;
+
+          let t = _.map(disabled, v => v.toString());
+          return !!~_.indexOf(t, label)
         },
         buttonAction(e) {
           let button = e.model.button;
