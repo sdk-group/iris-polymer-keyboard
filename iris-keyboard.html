@@ -13,26 +13,27 @@
       :host {
         display: block;
       }
-      
+
       paper-button.backspace-button,
       paper-button.next-button {}
-      
+
       paper-button.spacebar-button {
         width: 50%;
       }
-      
+
       paper-button {
         min-width: 20px;
         padding: 10px 15px;
         @apply(--keyboard-button);
       }
-      
+
       .keyboard-row {
         justify-content: center;
         flex-direction: row;
         display: flex;
         margin-bottom: 15px;
       }
+
     </style>
     <div class$="{{layout_name}}">
       <template is="dom-repeat" items="[[processed_layout]]" as="row">
@@ -53,7 +54,7 @@
 
   <script>
     'use strict';
-    (function() {
+    (function () {
       let default_placeholders = {
         'spacebar': {
           label: 'Пробел',
@@ -70,9 +71,7 @@
           icon: 'hardware:keyboard-backspace'
         }
       };
-      let _meta = Polymer.Base.create('iron-meta', {
-        type: 'iris-keyboard-layouts'
-      });
+      let _meta = Polymer.Base.create('iron-meta', {type: 'iris-keyboard-layouts'});
       Polymer({
         is: 'iris-keyboard',
         properties: {
@@ -103,12 +102,8 @@
           let layout_map = model.getLayout();
 
           this.processed_layout = _.map(layout_map, (row) => _.map(row, (button) => {
-            if (button.toString().indexOf('&&') !== 0) return {
-              action: 'type',
-              letter: button,
-              label: button,
-              class: 'button'
-            }
+            if (button.toString().indexOf('&&') !== 0)
+              return {action: 'type', letter: button, label: button, class: 'button'}
 
             let name = button.slice(2);
             let desc = default_placeholders[name];
@@ -117,10 +112,11 @@
           }));
         },
         isDisabled(label, disabled) {
-          if (!_.isArray(disabled)) return label == disabled;
+          if (!_.isArray(disabled))
+            return label == disabled;
 
           let t = _.map(disabled, v => v.toString());
-          return !!~_.indexOf(t, label)
+          return ! !~ _.indexOf(t, label)
         },
         buttonAction(e) {
           let button = e.model.button;
@@ -130,8 +126,11 @@
           } else {
             this[button.action](button);
             this.set('lastPressed', button.letter || button.action);
-          }
-        },
+
+            if (button.action == "type")
+              this.fire('type', this.lastPressed);
+            }
+          },
         confirm() {
           this.fire('keyboard-confirm', this.text);
         },
