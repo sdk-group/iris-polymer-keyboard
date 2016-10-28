@@ -39,7 +39,7 @@
       <template is="dom-repeat" items="[[processed_layout]]" as="row">
         <div class="keyboard-row horizontal layout wrap">
           <template is="dom-repeat" items="[[row]]" as="button">
-            <paper-button raised class$="[[button.class]]" on-click="buttonAction" disabled$="[[isDisabled(button.label,disabledButtons)]]">
+            <paper-button raised class$="[[button.class]]" on-click="buttonAction" disabled$="[[isDisabled(button.label,disabledButtons,button.action)]]">
               <template is="dom-if" if="[[button.icon]]">
                 <iron-icon icon="hardware:keyboard-backspace"></iron-icon>
               </template>
@@ -111,7 +111,11 @@
             return desc;
           }));
         },
-        isDisabled(label, disabled) {
+        isDisabled(label, disabled, action) {
+          if (action == 'backspace' && this.maxLength == 1) {
+            return true;
+          }
+
           if (!_.isArray(disabled))
             return label == disabled;
 
@@ -127,7 +131,7 @@
             this[button.action](button);
             this.set('lastPressed', button.letter || button.action);
 
-            if (button.action == "type")
+            if (button.action == "type" || button.action == "backspace") 
               this.fire('type', this.lastPressed);
             }
           },
